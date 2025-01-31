@@ -1,69 +1,65 @@
 # EnhancedCursor
 
-**EnhancedCursor** - это приложение для Windows, которое добавляет на экран настраиваемый анимированный курсор, имитирующий внешний вид курсора iPad Pro. Этот курсор отображается поверх всех остальных окон и следует за движениями мыши.
-
+**EnhancedCursor** is a Windows application that adds a customizable animated cursor to the screen, mimicking the look of the iPad Pro cursor. This cursor is displayed on top of all other windows and follows mouse movements.
 
 <details>
    
-   <summary> Функциональность </summary>
+   <summary> Functionality </summary>
    
-*   **Настройка размера курсора:** Возможность изменять размер основного круга курсора.
-*   **Настройка размера контура:** Возможность изменять размер контура курсора, который появляется при нажатии кнопок мыши.
-*   **Настройка цвета курсора:** Выбор цвета для основного курсора.
-*   **Настройка цвета контура:** Выбор цвета для контура курсора.
-*   **Настройка цвета границы:** Выбор цвета для границы основного курсора.
-*   **Настройка прозрачности курсора:** Возможность изменять прозрачность основного курсора.
-*   **Настройка прозрачности контура:** Возможность изменять прозрачность контура курсора.
-*   **Настройка прозрачности границы:** Возможность изменять прозрачность границы основного курсора.
-*   **Настройка скорости:** Возможность изменять скорость следования курсора за мышью.
-*   **Настройка ширины границы:** Возможность изменять ширину границы основного курсора.
-*   **Настройка длительности анимации:** Возможность изменять длительность анимации при нажатии и отпускании кнопок мыши.
-*   **Запуск при входе в систему:** Возможность настроить запуск приложения при старте Windows.
-*   **Системный трей:** Приложение имеет иконку в системном трее, через которую можно открыть настройки или закрыть приложение.
-*   **Логи:** Приложение ведет логи в файл `log.txt`, где записываются основные события.
-*   **Настройки по умолчанию:** Возможность сбросить все настройки к стандартным значениям.
+*   **Cursor Size Adjustment:** Ability to change the size of the main cursor circle.
+*   **Outline Size Adjustment:** Ability to change the size of the cursor outline that appears when mouse buttons are clicked.
+*   **Cursor Color Adjustment:**  Option to choose the color for the main cursor.
+*   **Outline Color Adjustment:** Option to choose the color for the cursor outline.
+*   **Border Color Adjustment:** Option to choose the color for the main cursor's border.
+*   **Cursor Opacity Adjustment:** Ability to change the transparency of the main cursor.
+*   **Outline Opacity Adjustment:** Ability to change the transparency of the cursor outline.
+*   **Border Opacity Adjustment:** Ability to change the transparency of the main cursor's border.
+*   **Speed Adjustment:** Ability to change how quickly the cursor follows the mouse.
+*   **Border Width Adjustment:** Ability to change the width of the main cursor's border.
+*   **Animation Duration Adjustment:** Ability to change the duration of the animation when mouse buttons are pressed and released.
+*   **Run on Startup:** Option to configure the application to start when Windows starts.
+*   **System Tray:** The application has an icon in the system tray, which can be used to open settings or close the application.
+*   **Logs:** The application keeps logs in a `log.txt` file, recording key events.
+*   **Default Settings:** Option to reset all settings to their default values.
   
 </details>
 
+### How to Use
 
-### Как использовать
+1.  **Run `ecur.exe`.**
+2.  **Configuration:**
+    *   Right-click the application's icon in the system tray.
+    *   Select "Settings" to open the settings window.
+    *   In the settings window, you can modify all the cursor parameters.
+    *   Click "Save" to save the settings.
+    *   Click "Close" to close the settings window.
+    *   Click "Set defaults" to set the default settings.
+    *   Click "Show logs" to open the log file.
+3.  **Operation:** The cursor will appear on the screen and follow the mouse movements. The outline will appear when the mouse buttons are clicked.
+4.  **Exit:** To close the application, select "Exit" from the system tray menu.
 
-1.  **Запустите `ecur.exe`.**
-2.  **Настройка:**
-    *   Кликните правой кнопкой мыши по иконке приложения в системном трее.
-    *   Выберите пункт "Settings", чтобы открыть окно настроек.
-    *   В окне настроек можно изменить все параметры курсора.
-    *   Нажмите "Save", чтобы сохранить настройки.
-    *   Нажмите "Close", чтобы закрыть окно настроек.
-    *   Нажмите "Set defaults", чтобы установить настройки по умолчанию.
-    *   Нажмите "Show logs", чтобы открыть файл логов.
-3.  **Работа:** Курсор будет отображаться на экране и следовать за движениями мыши. Контур будет появляться при нажатии на кнопки мыши.
-4.  **Выход:** Чтобы закрыть приложение, выберите пункт "Exit" в меню системного трея.
+### Requirements
 
-### Требования
+*   Windows 7 or later.
+*   For the best experience, it's recommended to use custom Windows cursors (EnhancedCursor is specifically designed for this program).
 
-*   Windows 7 или более поздняя версия.
-*   Для наилучшего опыта рекомендуется использовать кастомные курсоры Windows (EnhancedCursor - специально для этой программы).
+### Notes
 
-### Замечания
+*   The application works on top of all windows, so make sure it doesn't interfere with your workflow.
+*   The `log.txt` file is located in the same folder as the `ecur.exe` executable file.
 
-*   Приложение работает поверх всех окон, поэтому убедитесь, что оно вам не мешает.
-*   Лог файл `log.txt` находится в той же папке, что и исполняемый файл `ecur.exe`.
-
-### Скриншоты
+### Screenshots
 
 <div align="center">
     <img src="https://github.com/user-attachments/assets/d9f0dbeb-3e8c-4bda-9757-b9da60f75f5d" alt="EnhancedCursor" width="256" height="256">
-
-   <img src="https://github.com/user-attachments/assets/ae4c3424-b29c-45dd-87df-b8314d41f9f7" alt="EnhancedCursor settings" height="256" width="auto">
-
+    <img src="https://github.com/user-attachments/assets/ae4c3424-b29c-45dd-87df-b8314d41f9f7" alt="EnhancedCursor settings" height="256" width="auto">
 </div>
 
-### Благодарности
+### Acknowledgments
 
-*   Спасибо Qt за предоставление мощной библиотеки для разработки.
-*   Спасибо StackOverflow и другим ресурсам за помощь в решении различных проблем.
+*   Thanks to Qt for providing a powerful library for development.
+*   Thanks to StackOverflow and other resources for help in solving various issues.
 
-### Контакты
+### Contacts
 
-Если у вас есть вопросы или предложения, пишите мне: [@sl1dee36](https://www.github.com/sl1dee36)
+If you have any questions or suggestions, feel free to contact me: [@sl1dee36](https://www.github.com/sl1dee36)
