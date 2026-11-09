@@ -16,6 +16,7 @@ a = Analysis(
         'winreg',
         'enhanced_cursor',
         'enhanced_cursor.config',
+        'enhanced_cursor.fluid_physics',
         'enhanced_cursor.logger',
         'enhanced_cursor.overlay',
         'enhanced_cursor.preview_widget',
@@ -56,4 +57,5 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=['cursor.ico'],
+    uac_admin=True,
 )

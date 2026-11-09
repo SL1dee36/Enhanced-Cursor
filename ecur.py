@@ -11,7 +11,9 @@ from enhanced_cursor.settings_dialog import SettingsDialog
 from enhanced_cursor.tray_icon import TrayManager
 from enhanced_cursor.win32_utils import (
     acquire_single_instance_mutex,
-    release_single_instance_mutex
+    release_single_instance_mutex,
+    restore_system_cursor,
+    shutdown_high_resolution_timer
 )
 
 
@@ -64,6 +66,8 @@ class EnhancedCursorApp:
 
     def exit_app(self):
         self.logger.info("Exiting application...")
+        restore_system_cursor()
+        shutdown_high_resolution_timer()
         if self.overlay:
             self.overlay.unregister_hotkey()
             self.overlay.close()
@@ -97,9 +101,13 @@ def main():
     if os.path.exists(icon_path):
         app.setWindowIcon(QIcon(icon_path))
 
-    ec_app = EnhancedCursorApp()
-    exit_code = app.exec()
-    release_single_instance_mutex()
+    try:
+        ec_app = EnhancedCursorApp()
+        exit_code = app.exec()
+    finally:
+        restore_system_cursor()
+        shutdown_high_resolution_timer()
+        release_single_instance_mutex()
     sys.exit(exit_code)
 
 

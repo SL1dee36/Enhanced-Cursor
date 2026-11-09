@@ -1,5 +1,6 @@
 import os
 import sys
+import atexit
 import ctypes
 from ctypes import wintypes
 import winreg
@@ -12,9 +13,15 @@ from enhanced_cursor.logger import get_logger
 logger = get_logger()
 user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
+try:
+    winmm = ctypes.windll.winmm
+except Exception:
+    winmm = None
 
 _mutex_handle = None
 MUTEX_NAME = "EnhancedCursor_SingleInstance_Mutex_v2"
+_timer_period_set = False
+_system_cursor_hidden = False
 
 
 def acquire_single_instance_mutex(name: str = MUTEX_NAME) -> bool:
@@ -150,13 +157,21 @@ IGNORED_WINDOW_CLASSES: Set[str] = {
     "Shell_TrayWnd",
     "Shell_SecondaryTrayWnd",
     "Windows.UI.Core.CoreWindow",
+    "ApplicationFrameWindow",
+    "#32770",                 # Standard Windows Dialog box (MessageBox, File Open/Save, Run)
+    "DirectUIHWND",           # Modern Explorer & Shell dialogs
+    "CabinetWClass",          # File Explorer
+    "Shell_Dialog",           # Shell modals
+    "TaskSwitcherWnd",        # Alt+Tab
+    "XamlExplorerHostIslandWindow",
 }
 
 
 def is_fullscreen_window_active(ignore_hwnds: Optional[Set[int]] = None) -> bool:
     """
-    Checks if active foreground window is occupying the entire monitor in fullscreen mode
-    (such as a game, full-screen video, or presentation).
+    Checks if active foreground window is occupying the entire monitor in exclusive fullscreen mode
+    (such as a game, full-screen video player, or presentation).
+    Modal dialogs and standard application windows are explicitly excluded.
     """
     try:
         hwnd = win32gui.GetForegroundWindow()
@@ -164,7 +179,14 @@ def is_fullscreen_window_active(ignore_hwnds: Optional[Set[int]] = None) -> bool
             return False
 
         class_name = win32gui.GetClassName(hwnd)
-        if class_name in IGNORED_WINDOW_CLASSES:
+        if class_name in IGNORED_WINDOW_CLASSES or class_name.startswith("#32770"):
+            return False
+
+        # Exclude standard windows with captions / titlebars or dialog styles
+        style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
+        if (style & win32con.WS_CAPTION) == win32con.WS_CAPTION:
+            return False
+        if (style & win32con.WS_DLGFRAME) == win32con.WS_DLGFRAME:
             return False
 
         # Get window rect
@@ -191,12 +213,51 @@ def is_fullscreen_window_active(ignore_hwnds: Optional[Set[int]] = None) -> bool
             mon_rect = mi.rcMonitor
             mon_w = mon_rect.right - mon_rect.left
             mon_h = mon_rect.bottom - mon_rect.top
-            # If foreground window spans the monitor dimensions or larger
+            # If foreground window spans the monitor dimensions exactly without caption
             if rect[0] <= mon_rect.left and rect[1] <= mon_rect.top and win_w >= mon_w and win_h >= mon_h:
                 return True
     except Exception:
         pass
     return False
+
+
+def bring_window_to_topmost(hwnd: int):
+    """
+    Ensures our overlay window stays at the absolute front of the topmost Z-order list,
+    even when new modal dialogs, popups, or system message boxes are created.
+    """
+    try:
+        win32gui.SetWindowPos(
+            hwnd,
+            win32con.HWND_TOPMOST,
+            0, 0, 0, 0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOACTIVATE
+        )
+    except Exception:
+        pass
+
+
+def is_running_as_admin() -> bool:
+    """Checks whether the current process has Administrator privileges."""
+    try:
+        return bool(ctypes.windll.shell32.IsUserAnAdmin())
+    except Exception:
+        return False
+
+
+def restart_as_admin():
+    """Relaunches the application with elevated Administrator privileges."""
+    try:
+        if getattr(sys, "frozen", False):
+            exe = sys.executable
+            args = ""
+        else:
+            exe = sys.executable
+            args = f'"{os.path.abspath(sys.argv[0])}"'
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", exe, args, None, 1)
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Failed to elevate process: {e}")
 
 
 class _CURSORINFO(ctypes.Structure):
@@ -230,4 +291,141 @@ def is_ibeam_cursor_active() -> bool:
     except Exception:
         pass
     return False
+
+
+# ==========================================
+# High-Resolution Windows Multimedia Timer
+# ==========================================
+
+def init_high_resolution_timer():
+    """Sets system timer resolution to 1ms to eliminate timer jitter and lag."""
+    global _timer_period_set
+    if winmm and not _timer_period_set:
+        try:
+            winmm.timeBeginPeriod(1)
+            _timer_period_set = True
+            logger.info("High-resolution timer (1ms) initialized via winmm.timeBeginPeriod.")
+        except Exception as e:
+            logger.warning(f"Failed to set high resolution timer: {e}")
+
+
+def shutdown_high_resolution_timer():
+    """Restores default system timer resolution."""
+    global _timer_period_set
+    if winmm and _timer_period_set:
+        try:
+            winmm.timeEndPeriod(1)
+            _timer_period_set = False
+        except Exception:
+            pass
+
+
+atexit.register(shutdown_high_resolution_timer)
+
+
+# ==========================================
+# Windows System Accent Color & Dark Mode
+# ==========================================
+
+def get_system_accent_color() -> str:
+    """
+    Retrieves the current Windows system accent color as a hex string '#RRGGBB'.
+    Reads from DWM AccentColor (ABGR) or Explorer AccentPalette.
+    """
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\DWM") as key:
+            val, _ = winreg.QueryValueEx(key, "AccentColor")
+            # ABGR format: 0xAABBGGRR
+            r = val & 0xFF
+            g = (val >> 8) & 0xFF
+            b = (val >> 16) & 0xFF
+            return f"#{r:02x}{g:02x}{b:02x}"
+    except Exception:
+        pass
+
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Accent") as key:
+            val, _ = winreg.QueryValueEx(key, "AccentPalette")
+            if len(val) >= 3:
+                return f"#{val[0]:02x}{val[1]:02x}{val[2]:02x}"
+    except Exception:
+        pass
+
+    return "#0078d7"  # Default Windows Blue fallback
+
+
+def is_system_dark_mode() -> bool:
+    """Checks whether Windows Apps theme is set to Dark Mode."""
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize") as key:
+            val, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+            return val == 0
+    except Exception:
+        return True
+
+
+# ==========================================
+# System Cursor Replacement / Hide / Restore
+# ==========================================
+
+OCR_NORMAL = 32512
+OCR_IBEAM = 32513
+OCR_HAND = 32649
+SPI_SETCURSORS = 0x0057
+
+
+def hide_system_cursor(hide_ibeam: bool = False, hide_hand: bool = False) -> bool:
+    """
+    Replaces standard Windows arrow cursor with a 100% transparent cursor,
+    allowing our custom fluid cursor to be drawn without the Windows arrow on top.
+    """
+    global _system_cursor_hidden
+    if _system_cursor_hidden:
+        return True
+
+    try:
+        # Create 32x32 transparent cursor
+        # AND mask = all 0xFF, XOR mask = all 0x00 -> 100% transparent
+        and_mask = (ctypes.c_ubyte * 128)(*([0xFF] * 128))
+        xor_mask = (ctypes.c_ubyte * 128)(*([0x00] * 128))
+
+        h_blank = user32.CreateCursor(None, 0, 0, 32, 32, and_mask, xor_mask)
+        if not h_blank:
+            logger.warning("Failed to create transparent cursor.")
+            return False
+
+        # SetSystemCursor consumes the handle
+        res = user32.SetSystemCursor(h_blank, OCR_NORMAL)
+        if res:
+            _system_cursor_hidden = True
+            logger.info("System cursor hidden successfully via SetSystemCursor.")
+            return True
+        else:
+            user32.DestroyCursor(h_blank)
+            logger.warning("SetSystemCursor returned 0.")
+    except Exception as e:
+        logger.error(f"Error hiding system cursor: {e}")
+    return False
+
+
+def restore_system_cursor() -> bool:
+    """
+    Restores the standard Windows system cursors.
+    Safe to call at any time or multiple times.
+    """
+    global _system_cursor_hidden
+    try:
+        user32.SystemParametersInfoW(SPI_SETCURSORS, 0, None, 0)
+        _system_cursor_hidden = False
+        return True
+    except Exception as e:
+        logger.error(f"Error restoring system cursor: {e}")
+        return False
+
+
+def is_system_cursor_hidden() -> bool:
+    return _system_cursor_hidden
+
+
+atexit.register(restore_system_cursor)
 

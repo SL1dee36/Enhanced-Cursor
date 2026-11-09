@@ -4,6 +4,7 @@ from PySide6.QtGui import QIcon, QAction, QActionGroup
 
 from enhanced_cursor.config import ConfigManager, CursorConfig
 from enhanced_cursor.logger import open_log_file, get_logger
+from enhanced_cursor.win32_utils import is_running_as_admin, restart_as_admin
 
 logger = get_logger()
 
@@ -59,9 +60,15 @@ class TrayManager:
         act_logs.triggered.connect(open_log_file)
         self.menu.addAction(act_logs)
 
+        # 5. Admin elevation action if not currently elevated
+        if not is_running_as_admin():
+            act_admin = QAction("🛡️ Запустить от имени Администратора", self.menu)
+            act_admin.triggered.connect(restart_as_admin)
+            self.menu.addAction(act_admin)
+
         self.menu.addSeparator()
 
-        # 5. Exit action
+        # 6. Exit action
         act_exit = QAction(self.tr_text("tray_exit"), self.menu)
         act_exit.triggered.connect(self.on_exit)
         self.menu.addAction(act_exit)
