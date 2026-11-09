@@ -6,8 +6,23 @@ a = Analysis(
     ['ecur.py'],
     pathex=[],
     binaries=[],
-    datas=[('cursor.png', '.')],
-    hiddenimports=['win32gui', 'win32con', 'winreg'],
+    datas=[
+        ('cursor.png', '.'),
+        ('cursor.ico', '.')
+    ],
+    hiddenimports=[
+        'win32gui',
+        'win32con',
+        'winreg',
+        'enhanced_cursor',
+        'enhanced_cursor.config',
+        'enhanced_cursor.logger',
+        'enhanced_cursor.overlay',
+        'enhanced_cursor.preview_widget',
+        'enhanced_cursor.settings_dialog',
+        'enhanced_cursor.tray_icon',
+        'enhanced_cursor.win32_utils'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -40,6 +55,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['cursor.png'],
+    icon=['cursor.ico'],
 )
-

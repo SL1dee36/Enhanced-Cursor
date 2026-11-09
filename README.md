@@ -1,65 +1,95 @@
 # EnhancedCursor
 
-**EnhancedCursor** is a Windows application that adds a customizable animated cursor to the screen, mimicking the look of the iPad Pro cursor. This cursor is displayed on top of all other windows and follows mouse movements.
+EnhancedCursor — это лёгкая и удобная программа для Windows, которая добавляет к обычному курсору мыши анимированный кружок в стиле iPadOS. Он отображается поверх всех окон, плавно следует за движениями руки с приятной пружинящей инерцией и красиво анимируется при кликах.
 
-<details>
-   
-   <summary> Functionality </summary>
-   
-*   **Cursor Size Adjustment:** Ability to change the size of the main cursor circle.
-*   **Outline Size Adjustment:** Ability to change the size of the cursor outline that appears when mouse buttons are clicked.
-*   **Cursor Color Adjustment:**  Option to choose the color for the main cursor.
-*   **Outline Color Adjustment:** Option to choose the color for the cursor outline.
-*   **Border Color Adjustment:** Option to choose the color for the main cursor's border.
-*   **Cursor Opacity Adjustment:** Ability to change the transparency of the main cursor.
-*   **Outline Opacity Adjustment:** Ability to change the transparency of the cursor outline.
-*   **Border Opacity Adjustment:** Ability to change the transparency of the main cursor's border.
-*   **Speed Adjustment:** Ability to change how quickly the cursor follows the mouse.
-*   **Border Width Adjustment:** Ability to change the width of the main cursor's border.
-*   **Animation Duration Adjustment:** Ability to change the duration of the animation when mouse buttons are pressed and released.
-*   **Run on Startup:** Option to configure the application to start when Windows starts.
-*   **System Tray:** The application has an icon in the system tray, which can be used to open settings or close the application.
-*   **Logs:** The application keeps logs in a `log.txt` file, recording key events.
-*   **Default Settings:** Option to reset all settings to their default values.
-  
-</details>
+Такой курсор делает работу за компьютером визуально приятнее, а ещё здорово помогает при записи видео, демонстрациях и стримах: зрителям гораздо проще следить за тем, куда вы нажимаете.
 
-### How to Use
+---
 
-1.  **Run `ecur.exe`.**
-2.  **Configuration:**
-    *   Right-click the application's icon in the system tray.
-    *   Select "Settings" to open the settings window.
-    *   In the settings window, you can modify all the cursor parameters.
-    *   Click "Save" to save the settings.
-    *   Click "Close" to close the settings window.
-    *   Click "Set defaults" to set the default settings.
-    *   Click "Show logs" to open the log file.
-3.  **Operation:** The cursor will appear on the screen and follow the mouse movements. The outline will appear when the mouse buttons are clicked.
-4.  **Exit:** To close the application, select "Exit" from the system tray menu.
+### Основные возможности
 
-### Requirements
+* Мягкое следование и физика: курсор двигается плавно, без рывков, а скорость и задержку отклика можно настроить под себя.
+* Анимация клика: при нажатии любой кнопки мыши центральный кружок увеличивается, а внешний контур сжимается, давая понятный визуальный отклик.
+* Поддержка нескольких мониторов: программа охватывает весь рабочий стол и без проблем работает на двух, трёх и более экранах с разным разрешением и масштабом.
+* Быстрое переключение стилей из трея: прямо в меню иконки около часов можно в один клик выбрать готовый пресет (классический стиль iPad, яркий неоновый, маркер для презентаций или минималистичный).
+* Умное скрытие: подсветка не мешает вам жить — она плавно исчезает, если мышь неподвижна пару секунд, скрывается при наборе текста и автоматически засыпает в полноэкранных играх.
+* Горячая клавиша: подсветку всегда можно мгновенно включить или выключить сочетанием клавиш Ctrl + Alt + H в любой момент.
+* Минимальная нагрузка на систему: программа перерисовывает только маленький участок под самим курсором, поэтому процессор и видеокарта остаются свободными.
+* Запуск вместе с системой: опция автозапуска включается одной галочкой прямо в настройках.
 
-*   Windows 7 or later.
-*   For the best experience, it's recommended to use custom Windows cursors (EnhancedCursor is specifically designed for this program).
+---
 
-### Notes
+### Как пользоваться
 
-*   The application works on top of all windows, so make sure it doesn't interfere with your workflow.
-*   The `log.txt` file is located in the same folder as the `ecur.exe` executable file.
+1. Запустите `ecur.exe` (или запустите исходник через Python).
+2. В системном трее (в правом нижнем углу экрана) появится значок программы.
+3. Кликните по значку, чтобы открыть окно настроек:
+   * Здесь можно настроить размер кружка, толщину границы и размер внешнего контура.
+   * Выбрать любые цвета и прозрачность для каждого элемента.
+   * Настроить скорость перемещения и длительность анимации при нажатии.
+   * В правой части окна находится окно предпросмотра, масштаб которого можно менять колёсиком мыши или ползунком внизу.
+4. Нажмите «Save», чтобы сохранить изменения.
+5. Чтобы быстро сменить стиль, щёлкните по значку в трее правой кнопкой мыши и перейдите в подменю «Presets».
+6. Чтобы закрыть программу, нажмите «Exit» в меню трея.
 
-### Screenshots
+---
 
-<div align="center">
-    <img src="https://github.com/user-attachments/assets/d9f0dbeb-3e8c-4bda-9757-b9da60f75f5d" alt="EnhancedCursor" width="256" height="256">
-    <img src="https://github.com/user-attachments/assets/ae4c3424-b29c-45dd-87df-b8314d41f9f7" alt="EnhancedCursor settings" height="256" width="auto">
-</div>
+### Горячие клавиши и управление
 
-### Acknowledgments
+* Ctrl + Alt + H — быстро включить или выключить подсветку.
+* Клик по значку в трее — открыть настройки.
+* Правый клик по значку в трее — меню выбора пресетов, открытие настроек, просмотр журнала и выход.
+* Колёсико мыши в окне настроек — зум окна предпросмотра.
 
-*   Thanks to Qt for providing a powerful library for development.
-*   Thanks to StackOverflow and other resources for help in solving various issues.
+---
 
-### Contacts
+### Системные требования
 
-If you have any questions or suggestions, feel free to contact me: [@sl1dee36](https://www.github.com/sl1dee36)
+* Операционная система: Windows 10 или Windows 11 (работает и на Windows 7 / 8).
+* Для запуска из исходников: Python 3.10 или новее.
+
+---
+
+### Запуск из исходного кода
+
+Если вы хотите запускать или модифицировать проект напрямую:
+
+1. Склонируйте репозиторий:
+```bash
+git clone https://github.com/sl1dee36/Enhanced-Cursor.git
+cd Enhanced-Cursor
+```
+
+2. Установите зависимости:
+```bash
+pip install -r requirements.txt
+```
+
+3. Запустите приложение:
+```bash
+python ecur.py
+```
+
+---
+
+### Сборка exe-файла
+
+Чтобы собрать полностью автономный файл `ecur.exe` со своей иконкой:
+
+Просто запустите скрипт сборки:
+```cmd
+build.bat
+```
+
+Или выполните команду сборщика вручную:
+```cmd
+pyinstaller --clean ecur.spec
+```
+
+Готовый файл появится в папке `dist/ecur.exe`. Ему не требуется установленный Python — его можно переносить на любой другой компьютер с Windows.
+
+---
+
+### Лицензия
+
+Проект распространяется под свободной лицензией MIT. Подробности смотрите в файле LICENSE.
